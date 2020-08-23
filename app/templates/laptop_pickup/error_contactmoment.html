@@ -1,41 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'error_contactmoment.html' %}
 
 {% block content %}
-    <div class="container">
-        <form id="survey" action="{{ url_for('subscribe_contactmoment', organization=organization, token=email_token) }}" method="post">
-            {% if error == 'booking_not_found' %}
-                <h1>U mag dit venster sluiten </h1>
-                <img src="{{ url_for('static', filename='img/LogoCampus.png') }}" width="200" height="200" align="right"></a>
-            {% elif error == 'double_booked' %}
-                <h1>Onze excuses, maar u bent reeds ingeschreven voor volgend contactmoment: </h1>
-                <img src="{{ url_for('static', filename='img/LogoCampus.png') }}" width="200" height="200" align="right"></a>
-                <b>{{ contactmoment }}</b><br><br>
-                Deze inschrijving wordt genegeerd.<br>
-                Wilt u inschrijven voor een andere contactmoment, druk dan op onderstaande knop, anders mag u dit venster sluiten.<br>
-                <br>
-                <button type="submit" class="btn btn-primary">Inschrijven voor nieuw contactmoment</button>
-            {% elif error == 'max_subscriptions' %}
-                <h1>Onze excuses, maar volgende contactmoment is reeds volzet: </h1>
-                <img src="{{ url_for('static', filename='img/LogoCampus.png') }}" width="200" height="200" align="right"></a>
-                <b>{{ contactmoment }}</b><br><br>
-                Iemand anders heeft zojuist de laatste plaats voor dit contactmoment ingenomen.<br>
-                Wilt u inschrijven voor een andere contactmoment, druk dan op onderstaande knop, anders mag u dit venster sluiten.<br>
-                <br>
-                <button type="submit" class="btn btn-primary">Inschrijven voor nieuw contactmoment</button>
-            {% elif error == 'nothing_selected' %}
-                <h1>U hebt geen contactmoment aangeduid</h1>
-                Wilt u nogmaals proberen, druk dan op onderstaande knop, anders mag u dit venster sluiten.<br>
-                <br>
-                <button type="submit" class="btn btn-primary">Inschrijven voor contactmoment</button>
-            {% elif error == 'no_invite' %}
-                <h1>Onze excuses, maar uw e-mailadres kan niet worden terug gevonden </h1>
-                <img src="{{ url_for('static', filename='img/LogoCampus.png') }}" width="200" height="200" align="right"></a>
-                Gelieve contact op te nemen met <a href="mailto:ict@campussintursula.be">ict@campussintursula.be</a><br>
-            {%  endif %}
-        </form>
-    </div>
     {{ super() }}
 {% endblock %}
-
-
-    </form>

@@ -1,57 +1,59 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <form id="survey" action="{{ url_for('save_contactmoment') }}" method="post">
-        <div class="container">
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-info" role="alert">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
+    <div class="contact-table">
+        <form action="{{ '/save_contactmoment/' + organization }}" method="post">
+            <div class="container">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-info" role="alert">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
 
-            <h1>Contactmoment</h1>
-            <img src="{{ url_for('static', filename='img/LogoCampus.png') }}" width="200" height="200" align="right"></a>
-            U gebruikt e-mail:&nbsp;<b>{{ email }}</b><br>
-            <p>Hier kan u voor één contactmoment inschrijven.<br>
-                Een contactmoment dat volzet is (rood), kan niet meer worden geselecteerd.<br>
-                Eén contactmoment duurt <b>{{ timeslot_length }}</b> minuten.<br>
-                Kies een contactmoment en druk onderaan op <b>Insturen</b>.<br>
-                <br>
-            </p>
-        </div>
-        <input type="text" name="email_token" value="{{ email_token }}" hidden>
-        <input type="text" name="organization" value="{{ organization }}" hidden>
-        <input type="text" name="email" value="{{ email }}" hidden>
-        <hr class="fat_line">
-        {% if contact_table %}
-            <table class="table table-bordered" style="width: 1px;">
-                <tr>
-                    <th style="white-space: nowrap;">Datum</th>
-                    {% for s in contact_table[0].slots %}
-                        <th>{{ s.time }}</th>
-                    {% endfor %}
-                </tr>
-                {% for c in contact_table %}
+                <h1>Contactmoment</h1>
+                U gebruikt e-mail:&nbsp;<b>{{ email }}</b><br>
+                <p>Hier kan u voor één contactmoment inschrijven.<br>
+                    Een contactmoment dat volzet is (rood), kan niet meer worden geselecteerd.<br>
+                    Eén contactmoment duurt <b>{{ timeslot_length }}</b> minuten.<br>
+                    Kies een contactmoment en druk onderaan op <b>Insturen</b>.<br>
+                    <br>
+                </p>
+            </div>
+            <input type="text" name="email_token" value="{{ email_token }}" hidden>
+            <input type="text" name="organization" value="{{ organization }}" hidden>
+            <input type="text" name="email" value="{{ email }}" hidden>
+            <hr class="fat_line">
+            {% if contact_table %}
+                <table class="table table-bordered" style="width: 1px;">
                     <tr>
-                        <td  style="white-space: nowrap;">{{ c.date }}</td>
-                        {% for s in c.slots %}
-                            {%  if s.type == 'free' %}
-                                <td><input type="radio"  name="chbx" value="{{ c.date }}-{{ s.time }}" {% if s.type == 'busy' %}disabled{%  endif %}></td>
-                            {% else %}
-                                <td style="background-color:red;"></td>
-                            {%  endif %}
-                        {%  endfor %}
+                        <th style="white-space: nowrap;">Datum</th>
+                        {% for s in contact_table[0].slots %}
+                            <th style="padding: 2px;">{{ s.time }}</th>
+                        {% endfor %}
                     </tr>
-                {%  endfor %}
-            </table>
-        {% endif %}
-        <br>
-        <div class="container">
-            <button type="submit" class="btn btn-primary">Insturen</button>
+                    {% for c in contact_table %}
+                        <tr>
+                            <td  style="white-space: nowrap;">{{ c.date }}</td>
+                            {% for s in c.slots %}
+                                {%  if s.type == 'free' %}
+                                    <td style="text-align: center;padding: 2px;">
+                                        <input type="radio"  name="chbx" value="{{ c.date }}-{{ s.time }}" {% if s.type == 'busy' %}disabled{%  endif %}>
+                                    </td>
+                                {% else %}
+                                    <td style="background-color:red;"></td>
+                                {%  endif %}
+                            {%  endfor %}
+                        </tr>
+                    {%  endfor %}
+                </table>
+            {% endif %}
+            <br>
+            <div class="container">
+                <button type="submit" class="btn btn-primary">Insturen</button>
+            </div>
+        </form>
         </div>
-
-    </form>
     {{ super() }}
 {% endblock %}

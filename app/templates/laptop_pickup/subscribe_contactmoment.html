@@ -1,0 +1,26 @@
+{% extends 'subscribe_contactmoment.html' %}
+
+{% block content %}
+        <div class="container">
+         <form action="{{ '/save_contactmoment/' + organization }}" method="post">
+            Hier kan u kiezen of de leerling de laptop mag meenemen of dat u de laptop komt ophalen<br><br>
+            <input type="radio" name="who-pickup" value="student" onclick="display_contact_table(false);" checked>
+            &nbsp;Leerling neemt de laptop mee naar huis<br><br>
+            <input type="radio" name="who-pickup" value="parent" onclick="display_contact_table(true);">
+            &nbsp;U komt de laptop ophalen
+            <div class="student-selected">
+                <br><br>
+                <button type="submit" class="btn btn-primary">Insturen</button>
+            </div>
+            <input type="text" name="email_token" value="{{ email_token }}" hidden>
+            <input type="text" name="organization" value="{{ organization }}" hidden>
+            <input type="text" name="email" value="{{ email }}" hidden>
+        </form>
+        </div>
+    {{ super() }}
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script type="text/javascript"> {% include "laptop_pickup/subscribe_contactmoment.js" %}</script>
+{% endblock %}

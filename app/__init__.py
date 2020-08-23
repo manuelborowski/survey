@@ -61,6 +61,8 @@ flask_app = Flask(__name__)
 # V1.43 : insight : add button to update invite
 # Vxlsx_support.V1.43.1 : add xlsx support, reworked insight
 # Vxlsx_support.V1.43.2 : add TODO
+# V1.44 : laptop pickup : implemented mails and pages
+
 
 # TODO : per student, one invite with 2 (3) e-mailaddresses
 # TODO : invite : mail_sent : make it a counter
@@ -69,7 +71,7 @@ flask_app = Flask(__name__)
 
 @flask_app.context_processor
 def inject_version():
-    return dict(version='Vxlsx_support.V1.43.2')
+    return dict(version='V1.44')
 
 # enable logging
 LOG_HANDLE = 'SI'

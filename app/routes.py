@@ -157,10 +157,18 @@ def multiple_subscriptions(org):
 def extract_subject_and_content(template):
     try:
         subject_pattern = 'TAG_ONDERWERP_START.*\[\((.*?)\)\].*TAG_ONDERWERP_STOP'
-        subject = re.search(subject_pattern, template).group(1)
+        subject1 = re.search(subject_pattern, template).group(1)
+        subject_pattern = 'TAG_ONDERWERP2_START.*\[\((.*?)\)\].*TAG_ONDERWERP2_STOP'
+        subject2 = re.search(subject_pattern, template)
+        if subject2:
+            subject2 = subject2.group(1)
         content_pattern = 'TAG_INHOUD_START.*\[\((.*?)\)\].*TAG_INHOUD_STOP'
-        content = re.search(content_pattern, template).group(1)
-        return subject, content
+        content1 = re.search(content_pattern, template).group(1)
+        content_pattern = 'TAG_INHOUD2_START.*\[\((.*?)\)\].*TAG_INHOUD2_STOP'
+        content2 = re.search(content_pattern, template)
+        if content2:
+            content2 = content2.group(1)
+        return subject1, subject2, content1, content2
     except Exception as e:
         log.error(f'extract_subject_and_content: {e}')
 
@@ -177,12 +185,11 @@ def send_email_with_link_to_subscribe_for_contactmoment(**kwargs):
                                      Invite.organization == organization, Invite.contactmoment_sent == False).first()
         if not invite: return False
         template = Setting.query.filter(Setting.key == invite_template_key).first().value
-        email_subject, email_body = extract_subject_and_content(template)
+        email_subject, _, email_body, _ = extract_subject_and_content(template)
         base_url = Setting.query.filter(Setting.key == 'base_url').first().value
-        link = base_url + '/' + 'inschrijven_contactmoment' + '/' + organization + '/' + invite.token
-        link2 = base_url + '/' + 'student_lpu' + '/' + organization + '/' + invite.token
+        link = base_url + '/' + 'subscribe' + '/' + organization + '/' + invite.token
         email_info = {
-            'body': email_body.replace('TAG_LINK_URL', link).replace('TAG_LINK2_URL', link2),
+            'body': email_body.replace('TAG_LINK_URL', link),
             'subject': email_subject,
             'to': invite.email,
         }
@@ -206,26 +213,28 @@ def send_email_with_ack_of_contactmoment(**kwargs):
                                                 ContactResponse.organization == organization).first()
         if response:
             template = Setting.query.filter(Setting.key == ack_template_key).first().value
-            email_subject, email_body = extract_subject_and_content(template)
-            timeslot = response.timeslot.replace('-', ' om ')
-            subject = email_subject.replace('TAG_CONTACTMOMENT', timeslot)
-            unsubscribe_url = Setting.query.filter(Setting.key == 'unsubscribe_contactmoment_url').first().value
-            base_url = Setting.query.filter(Setting.key == 'base_url').first().value
-            unsubscribe_link = '/'.join([base_url, 'uitschrijven_contactmoment', organization, response.timeslot.replace('/','@'),
-                             response.invite.token])
-            info_link = '/'.join([base_url, 'info_inschrijvingen', organization, response.invite.token])
-            email_info = {
-                'body': email_body.replace('TAG_CONTACTMOMENT', timeslot).
-                    replace('TAG_UNSUBSCRIBE_URL', unsubscribe_link).replace('TAG_INFO_URL', info_link),
-                'subject': subject,
-                'bcc_list': [],
-                'to': response.invite.email,
-            }
-            log.info(f'"{subject}" to {response.invite.email}')
-            ret = send_email(organization, email_info)
-            if ret:
-                response.email_sent = True
-                db.session.commit()
+            if organization == 'SUMLPU':
+                subject_student, subject_parent, body_student, body_parent = extract_subject_and_content(template)
+                if response.info == 'student':
+                    email_body = body_student
+                    email_subject = subject_student
+                else:
+                    timeslot = response.timeslot.replace('-', ' om ')
+                    email_body = body_parent.replace('TAG_CONTACTMOMENT', timeslot)
+                    email_subject = subject_parent
+                base_url = Setting.query.filter(Setting.key == 'base_url').first().value
+                link = base_url + '/' + 'subscribe' + '/' + organization + '/' + response.invite.token
+                email_info = {
+                    'body': email_body.replace('TAG_LINK_URL', link),
+                    'subject': email_subject,
+                    'bcc_list': [],
+                    'to': response.invite.email,
+                }
+                log.info(f'"{email_subject}" to {response.invite.email}')
+                ret = send_email(organization, email_info)
+                if ret:
+                    response.email_sent = True
+                    db.session.commit()
     return ret
 
 
@@ -339,8 +348,7 @@ def decode_time(slot, type, time, h, m, delta):
     i = h * 100 + m
     return i, h, m, decoded_time
 
-@flask_app.route('/inschrijven_contactmoment', methods=['GET', 'POST'])
-@flask_app.route('/inschrijven_contactmoment/<string:organization>/<string:token>', methods=['GET', 'POST'])
+@flask_app.route('/subscribe/SUI/<string:token>', methods=['GET', 'POST'])
 def subscribe_contactmoment(organization=None, token=None):
     contact_table, timeslot_length = create_contactmoment_table(organization, decode_time)
     email = ''

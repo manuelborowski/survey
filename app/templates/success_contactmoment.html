@@ -5,7 +5,6 @@
         <form id="survey" action="{{ url_for('subscribe_contactmoment', organization=organization, token=email_token) }}" method="post">
             {%  if info == 'subscribed' %}
                 <h1>Bedankt voor het inschrijven</h1>
-                <img src="{{ url_for('static', filename='img/LogoCampus.png') }}" width="200" height="200" align="right"></a>
                 <p>U gebruikt e-mail:&nbsp;{{ email }}<br>
                 U bent ingeschreven om langs te komen op {{ contactmoment }}<br>
                 U krijgt nog een e-mail ter bevestiging.<br>
