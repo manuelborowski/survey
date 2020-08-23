@@ -74,7 +74,7 @@ def inject_version():
     return dict(version='V1.44')
 
 # enable logging
-LOG_HANDLE = 'SI'
+LOG_HANDLE = 'SURVEY'
 log = logging.getLogger(LOG_HANDLE)
 
 LOG_FILENAME = os.path.join(sys.path[0], 'app/static/log/si-log.txt')
@@ -84,7 +84,7 @@ log_handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=10 * 1
 log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 log_handler.setFormatter(log_formatter)
 log.addHandler(log_handler)
-log.info('start SUM-INFOMOMENT')
+log.info('start SURVEY')
 
 flask_app.config.from_object(Config)
 db = SQLAlchemy(flask_app)
@@ -195,6 +195,7 @@ if len(sys.argv) < 2 or len(sys.argv) > 1 and sys.argv[1] != 'db':
     admin.add_link(MenuLink(name='settings', category='SUI-contact', url='\settings\SUI'))
     admin.add_link(MenuLink(name='Multiple', category='SUI-contact', url='\multiple_subscriptions\SUI'))
     admin.add_link(MenuLink(name='Settings', category='SUM-laptop', url='/settings/SUMLPU'))
+    admin.add_link(MenuLink(name='Insight', category='SUM-laptop', url='/info/SUMLPU/internal'))
     admin.add_link(MenuLink(name='Uitloggen', category='', url='\logout'))
 
 

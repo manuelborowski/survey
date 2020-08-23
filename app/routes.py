@@ -85,14 +85,6 @@ def get_insight(org, info_token = None, topic='subscriptions'):
         ContactResponse.timeslot_date).all()
 
     if topic == 'subscriptions':
-        if org == 'SUM':
-            active_links = Link.query.filter(Link.enabled == True).all()
-            for link in active_links:
-                infomoment_info.append({
-                    'label': f'{link.timeslot.name}: {link.topic.name}',
-                    'count': Response.query.filter(Response.topic == link.topic, Response.timeslot == link.timeslot).count()
-                })
-
         contact_table, timeslot_length = create_contactmoment_table(org, insight_decode_time)
         for day in contact_table:
             date = day['date']

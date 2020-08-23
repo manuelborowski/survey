@@ -38,6 +38,7 @@
 {% endblock %}
 
 {% block content %}
+    <br><br><br><br><br><br><br><br>
     <div class="container">
     {% if topic == "subscriptions" or topic == None %}
         {%  if info.organization == "SUM" %}
@@ -59,14 +60,14 @@
                     <tr>
                         <th style="white-space: nowrap;">Datum</th>
                         {% for s in info.contact_table[0].slots %}
-                            <th>{{ s.time }}</th>
+                            <th style="padding: 2px;">{{ s.time }}</th>
                         {% endfor %}
                     </tr>
                     {% for c in info.contact_table %}
                         <tr>
                             <td  style="white-space: nowrap;">{{ c.date }}</td>
                             {% for s in c.slots %}
-                                <td>{{ s.count }}</td>
+                                <td style="padding: 2px;">{{ s.count }}</td>
                             {%  endfor %}
                         </tr>
                     {%  endfor %}
@@ -87,7 +88,11 @@
                     </tr>
                     {% for r in info.responses %}
                         <tr>
+                            {% if r.info == "student" %}
+                            <td  style="white-space: nowrap;">{{ "Leerling" }}</td>
+                            {%  else %}
                             <td  style="white-space: nowrap;">{{ r.timeslot }}</td>
+                            {%  endif %}
                             <td  style="white-space: nowrap;">{{ r.invite.first_name }}</td>
                             <td  style="white-space: nowrap;">{{ r.invite.last_name }}</td>
                             <td  style="white-space: nowrap;">{{ r.invite.email }}</td>
