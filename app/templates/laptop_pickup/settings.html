@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+    <h1>Instellingen voor {{ organization }}</h1>
+    <hr class="fat_line">
+    <button class="btn btn-primary" onclick="enable_change_settings()">Verander een setting</button>
+    <hr class="fat_line">
+    <h2>Verstuur e-mails.  Opgelet, dit kan enige tijd duren</h2>
+
+    <label class="switch">
+        <input type="checkbox" id="invite-contactmoment" class="setting-slider setting-enable">
+        <span class="slider"></span>
+    </label>
+    <b>SUMLPU: uitnodiging voor contactmoment-e-mails-verstuurd :</b> {{ info.nbr_invite_contactmoment_sent }} van de {{ info.nbr_email_addresses_enabled }}
+    <br>
+    <label class="switch">
+        <input type="checkbox" id="response-contactmoment" class="setting-slider setting-enable">
+        <span class="slider"></span>
+    </label>
+    <b>SUMLPU: bevestiging voor contactmoment-e-mails-verstuurd :</b> {{ info.nbr_response_contactmoment_sent }} van de {{ info.nbr_response_contactmoment }}
+
+    <hr class="fat_line">
+    <h2>E-mailadressen ingeschakeld: </h2>
+    <button class="btn btn-primary setting-enable" onclick="trigger_email_activity('sum-lpu', true);">Inschakelen</button>
+    <button class="btn btn-primary setting-enable" onclick="trigger_email_activity('sum-lpu', false);">Uitschakelen</button>
+    <b>SUMLPU e-mailaddressen: </b>{{ info.nbr_email_addresses_enabled }} van de {{ info.nbr_email_addresses }}
+
+    <hr class="fat_line">
+    <h2>SUMLPU: uitnodiging voor Contactmoment e-mail</h2>
+    <button class="btn btn-primary setting-enable" onclick="save_email_template('template-invite-contactmoment');">Bewaar uitnodiging Contactmoment</button>
+    <div id="template-invite-contactmoment"></div>
+
+    <h2>SUMLPU: bevestiging voor Contactmoment e-mail</h2>
+    <button class="btn btn-primary setting-enable" onclick="save_email_template('template-response-contactmoment');">Bewaar bevestiging Contactmoment</button>
+    <div id="template-response-contactmoment"></div>
+
+    <hr class="fat_line">
+    <h2>{{ organization }}: laad een bestand met de e-mailaddressen</h2>
+    <form id="survey" action="{{ url_for('load_email_addresses') }}" method="post"  enctype=multipart/form-data>
+{#    <form id="survey" action="{{ url_for('load_email_addresses') }}" method="post">#}
+        <input type="text" name="organization" value="{{ organization }}" hidden>
+        <a class="btn btn-primary" onclick="$('#upload_email_addresses').click();">Laad e-mailadressen</a>
+        <input id="save_settings_submit" type="submit" value="Import" style="display:none">
+        <input id='upload_email_addresses' type='file' name='upload_email_addresses'  style="display:none"
+               accept=".csv, .xlsx" onchange="$('#save_settings_submit').click();">
+    </form>
+
+    <hr class="fat_line">
+    <form id="survey" action="\admin" method="get">
+        <button type="submit" class="btn btn-primary">Backend</button>
+    </form>
+    </div>
+    {{ super() }}
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>var info = {{ info|tojson }}</script>
+    <script type="text/javascript"> {% include "laptop_pickup/settings.js" %}</script>
+{% endblock %}
+

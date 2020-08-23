@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>U bent ingeschreven in {{ organization }} voor volgende contactmomenten:</h1>
+        <img src="{{ url_for('static', filename='img/LogoCampus.png') }}" width="200" height="200" align="right"></a>
+        {% for i in info %}
+            <h1>{{ i }}</h1>
+        {%  endfor %}
+        <br>
+        U gebruikt e-mail:&nbsp;{{ email }}<br><br>
+        U mag dit venster sluiten.
+    </div>
+    {{ super() }}
+{% endblock %}

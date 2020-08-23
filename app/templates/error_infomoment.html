@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <form id="survey" action="{{ url_for('subscribe_infomoment', token=email_token) }}" method="post">
+            {% if error == 'double_booked' %}
+                <h1>Onze excuses, maar u bent reeds ingeschreven voor volgende infosessie: </h1>
+                <img src="{{ url_for('static', filename='img/LogoCampus.png') }}" width="200" height="200" align="right"></a>
+                <b>{{ session }}</b><br><br>
+                Deze inschrijving wordt genegeerd.<br>
+                Wilt u inschrijven voor een andere sessie, druk dan op onderstaande knop, anders mag u dit venster sluiten.<br>
+            {%  else %}
+                <h1>Onze excuses, maar volgende sessie is reeds volzet: </h1>
+                <img src="{{ url_for('static', filename='img/LogoCampus.png') }}" width="200" height="200" align="right"></a>
+                <b>{{ session }}</b><br><br>
+                Iemand anders heeft zojuist de laatste plaats voor deze sessie ingenomen.<br>
+                Wilt u inschrijven voor een andere sessie, druk dan op onderstaande knop, anders mag u dit venster sluiten.<br>
+            {%  endif %}
+            <br>
+            <button type="submit" class="btn btn-primary">Inschrijven voor nieuwe sessie</button>
+        </form>
+    </div>
+    {{ super() }}
+{% endblock %}
+
+
+    </form>

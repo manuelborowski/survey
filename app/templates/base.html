@@ -1,0 +1,136 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block head %}
+{{ super() }}
+{{ JSGlue.include() }}
+{% endblock %}
+
+{% block styles %}
+  {{super()}}
+   <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon-16x16.png') }}">
+   <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <style>
+    input:disabled {
+        background: #dddddd;
+    }
+
+    input:disabled+label {
+        color: #ccc;
+    }
+    body {
+        background-color: #f68a07;
+    }
+
+    .fat_line {
+         height:5px;
+         border-width:0;
+         color:black;
+         background-color:
+         black;margin:5px;
+    }
+    table, th, td {
+        border: 1px solid black;
+        border-collaps: collapse;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    input:checked + .slider {
+      background-color: #21f336;
+    }
+
+    input:disabled + .slider {
+      background-color: #777f78;
+    }
+
+    .slider {
+      background-color: #f32140;
+    }
+
+    input:focus + .slider {
+      box-shadow: 0 0 1px #21f336;
+    }
+
+    input:checked + .slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+      border-radius: 34px;
+    }
+
+    .slider.round:before {
+      border-radius: 50%;
+    }
+
+    .boxsizingBorder {
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+    width: 100%;
+    }
+
+    .container {
+        width: 90%;
+    }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <br>
+        <br>
+        <p>{{version}} Copyright © 2020. All Rights Reserved</p>
+    </div>
+{%  endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+    <script type="text/javascript"> {% include "base.js" %}</script>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <script>flash_messages({{messages|safe}});</script>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+

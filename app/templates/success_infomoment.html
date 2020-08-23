@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <form id="survey" action="{{ url_for('subscribe_infomoment', token=email_token) }}" method="post">
+            {%  if choices %}
+                <h1>Bedankt voor het inschrijven</h1>
+                <img src="{{ url_for('static', filename='img/LogoCampus.png') }}" width="200" height="200" align="right"></a>
+                <p>U gebruikt e-mail:&nbsp;{{ email }}<br>
+                U bent ingeschreven voor:<br>
+                <ul>
+                {% for choice in choices %}
+                    <li>{{ choice }}</li>
+                {% endfor %}
+                </ul>
+                U krijgt binnenkort een e-mail met een link naar de door u gekozen sessie.<br>
+                Wilt u nogmaals inschrijven voor een andere sessie, druk dan op onderstaande knop, anders mag u dit venster sluiten.<br>
+                <br>
+            {% else %}
+                <h1>U hebt geen sessie aangeduid</h1>
+                Wilt u nogmaals proberen, druk dan op onderstaande knop, anders mag u dit venster sluiten.<br>
+                <br>
+            {% endif %}
+            <button type="submit" class="btn btn-primary">Inschrijven voor nieuwe sessie</button>
+        </form>
+    </div>
+    {{ super() }}
+{% endblock %}
+
+
+    </form>

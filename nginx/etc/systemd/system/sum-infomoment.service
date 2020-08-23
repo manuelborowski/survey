@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve sum-infomoment
+After=network.target
+
+[Service]
+User=aboro
+Group=www-data
+WorkingDirectory=/home/aboro/projects/sum-infomoment
+Environment="PATH=/home/aboro/projects/sum-infomoment/venv/bin"
+ExecStart=/home/aboro/projects/sum-infomoment/venv/bin/uwsgi --ini sum-infomoment.ini
+
+[Install]
+WantedBy=multi-user.target

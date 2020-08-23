@@ -1,0 +1,10 @@
+server {
+    listen 5012;
+    listen 80;
+    server_name sim.exelbo.dynu.net;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:/home/aboro/projects/sum-infomoment/sum-infomoment.sock;
+    }
+}

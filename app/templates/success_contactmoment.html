@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <form id="survey" action="{{ url_for('subscribe_contactmoment', organization=organization, token=email_token) }}" method="post">
+            {%  if info == 'subscribed' %}
+                <h1>Bedankt voor het inschrijven</h1>
+                <img src="{{ url_for('static', filename='img/LogoCampus.png') }}" width="200" height="200" align="right"></a>
+                <p>U gebruikt e-mail:&nbsp;{{ email }}<br>
+                U bent ingeschreven om langs te komen op {{ contactmoment }}<br>
+                U krijgt nog een e-mail ter bevestiging.<br>
+                U mag dit venster sluiten.<br>
+                <br>
+            {%  elif info == 'unsubscribed' %}
+                <h1>U bent uitgeschreven voor volgend contactmoment: <br>{{ contactmoment }}</h1>
+                Wilt u nogmaals inschrijven, druk dan op onderstaande knop, anders mag u dit venster sluiten.<br>
+                <br>
+                <button type="submit" class="btn btn-primary">Inschrijven voor contactmoment</button>
+            {% endif %}
+        </form>
+    </div>
+    {{ super() }}
+{% endblock %}

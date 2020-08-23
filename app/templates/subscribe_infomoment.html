@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+    <h1>Infomoment SUM</h1>
+    <img src="{{ url_for('static', filename='img/LogoCampus.png') }}" width="200" height="200" align="right"></a>
+    <p>Hier kan u voor één sessie inschrijven, duid het bolletje van het gewenste moment aan.<br>
+        Wilt u nog een andere sessie volgen, dan moet u na het insturen nogmaals een keuze maken.<br>
+        Opgelet, er kunnen maximaal <b>{{ max_subscriptions }}</b> personen inschrijven per sessie.<br>
+        Een sessie die volzet is, kan niet meer worden geselecteerd.<br>
+        Kies een sessie en druk onderaan op <b>Insturen</b>.<br>
+        Als u met de cursor op het thema staat, verschijnt er beknopte info over de inhoud van deze sessie.<br>
+        <br>
+    </p>
+    <form id="survey" action="{{ url_for('save_infomoment') }}" method="post">
+        <input type="text" name="email_token" value="{{ email_token }}" hidden>
+        <input type="text" name="email" value="{{ email }}" hidden>
+        <div class="input-group">
+            <p>U gebruikt e-mail:&nbsp;<b>{{ email }}</b><br>
+        </div>
+        <hr class="fat_line">
+        {% for choice in choices %}
+            {% if choice.end_timeslot %}
+                <hr class="fat_line">
+            {% else %}
+                <div class="input-group">
+                <p>
+                    <input type="radio"  name="chbx" value="{{ choice.id }}" title="{{ choice.info|safe }}" {% if not choice.enabled %}disabled{%  endif %}>
+                    <label for="{{ choice.id }}" title="{{ choice.info|safe }}" {% if not choice.enabled %}disabled{%  endif %}>{{ choice.label }}</label>
+                </p>
+                </div>
+            {% endif %}
+        {% endfor %}
+        <br>
+        <button type="submit" class="btn btn-primary">Insturen</button>
+    </form>
+    </div>
+    {{ super() }}
+{% endblock %}

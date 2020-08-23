@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <form id="survey" action="{{ url_for('unsubscribe_contactmoment_confirm', organization=organization, token=email_token, id=id) }}" method="post">
+            <h1>U wilt zich uitschrijven voor volgend contactmoment:</h1>
+            <img src="{{ url_for('static', filename='img/LogoCampus.png') }}" width="200" height="200" align="right"></a>
+            <h1>{{ contactmoment }}</h1>
+            Druk op onderstaande knop om te bevestigen.<br>
+            Anders mag u dit venster sluiten.<br><br>
+            <button type="submit" class="btn btn-primary">Uitschrijven voor dit contactmoment</button>
+        </form>
+    </div>
+    {{ super() }}
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+    <h1>{{ info.organization }} dubbele inschrijvingen overzicht</h1>
+
+    {% if info %}
+        <hr class="fat_line">
+        <h2>Aantal inschrijvingen per contactmoment</h2>
+         <table class="table table-bordered" style="width: 1px;">
+            {% for email, slots in info.items() %}
+                <tr>
+                    <td  style="white-space: nowrap;">{{ email }}</td>
+                    {% for s in slots %}
+                        <td>{{ s }}</td>
+                    {%  endfor %}
+                </tr>
+            {%  endfor %}
+          </table>
+    {% endif %}
+
+    <hr class="fat_line">
+    <form id="survey" action="\admin" method="get">
+        <button type="submit" class="btn btn-primary">Backend</button>
+    </form>
+    </div>
+    {{ super() }}
+{% endblock %}

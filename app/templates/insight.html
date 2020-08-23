@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+  {{super()}}
+    <style>
+    body {
+        padding-top: 65px;
+    }
+    </style>
+{%  endblock %}
+
+{% block navbar %}
+<div class="busy-indicator"></div>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#sim-navbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" {% if test_server %}style="background-color: red;"{% endif %}>{{ navbar_title }} {{ organization }}</a>
+            {% if test_server %}
+            <a class="navbar-brand" style="background-color: red;color: black;"> TESTSERVER </a>
+            {% endif %}
+        </div>
+        <div class="collapse navbar-collapse" id="sim-navbar"  {% if test_server %}style="background-color: red;"{% endif %}>
+            <ul id="sb_navbar" class="nav navbar-nav navbar-right">
+                {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('info', **{'org': info.organization, 'token': info_token, 'topic': 'backend'}) }}">Backend</a></li>
+                {%  endif %}
+                <li><a href="{{ url_for('info', **{'org': info.organization, 'token': info_token, 'topic': 'subscriptions'}) }}">Inschrijvingen</a></li>
+                <li><a href="{{ url_for('info', **{'org': info.organization, 'token': info_token, 'topic': 'invites'}) }}">E-mails</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+    {% if topic == "subscriptions" or topic == None %}
+        {%  if info.organization == "SUM" %}
+            <h2>Aantal inschrijvingen per infomoment sessie</h2>
+            <table class="table-bordered table-condensed">
+            {% for infomoment in info.infomoment_info %}
+                <tr>
+                    <td>{{ infomoment.label }}</td>
+                    <td>{{ infomoment.count }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+            <hr class="fat_line">
+        {% endif %}
+
+        {% if info.contact_table %}
+            <h2>Aantal inschrijvingen per contactmoment</h2>
+             <table class="table table-bordered" style="width: 1px;">
+                    <tr>
+                        <th style="white-space: nowrap;">Datum</th>
+                        {% for s in info.contact_table[0].slots %}
+                            <th>{{ s.time }}</th>
+                        {% endfor %}
+                    </tr>
+                    {% for c in info.contact_table %}
+                        <tr>
+                            <td  style="white-space: nowrap;">{{ c.date }}</td>
+                            {% for s in c.slots %}
+                                <td>{{ s.count }}</td>
+                            {%  endfor %}
+                        </tr>
+                    {%  endfor %}
+              </table>
+        {% endif %}
+
+        {% if info.responses %}
+            <hr class="fat_line">
+            <h2>Inschrijvingen</h2>
+            <h3>Aantal inschrijvingen: {{ info.responses_count }}</h3>
+             <table class="table table-bordered" style="width: 1px;">
+                    <tr>
+                        <th style="white-space: nowrap;">Datum</th>
+                        <th style="white-space: nowrap;">Voornaam</th>
+                        <th style="white-space: nowrap;">Naam</th>
+                        <th style="white-space: nowrap;">E-mail</th>
+                        <th>Verwijder</th>
+                    </tr>
+                    {% for r in info.responses %}
+                        <tr>
+                            <td  style="white-space: nowrap;">{{ r.timeslot }}</td>
+                            <td  style="white-space: nowrap;">{{ r.invite.first_name }}</td>
+                            <td  style="white-space: nowrap;">{{ r.invite.last_name }}</td>
+                            <td  style="white-space: nowrap;">{{ r.invite.email }}</td>
+                            <td><button type="submit" class="btn btn-primary"
+                                  onclick="do_action('remove-subscription', '{{ info.organization }}',
+                                          {{ r.id }});">Verwijder</button></td>
+
+                        </tr>
+                    {%  endfor %}
+              </table>
+        {% endif %}
+    {% endif %}
+
+    {% if topic == "invites" or topic == None %}
+        <h3>Aantal e-mailaddressen: {{ info.invites_count }}</h3>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#new-invite-modal">E-mailadres toevoegen</button>
+        <br><br>
+        <table class="table table-bordered">
+            <tr>
+                <td bgcolor="#ff4500">Niet meer geïnteresseerd</td>
+                <td bgcolor="#ffb6c1">Nog niet ingeschreven</td>
+                <td bgcolor="#90ee90">Ingeschreven</td>
+            </tr>
+        </table>
+         <table class="table table-bordered" style="width: 1px;">
+                <tr>
+                    <th style="white-space: nowrap;">Voornaam</th>
+                    <th style="white-space: nowrap;">Naam</th>
+                    <th style="white-space: nowrap;">E-mail</th>
+                    <th>Uitnodiging contactmoment opnieuw sturen?</th>
+                    <th>Inschrijven voor contactmoment</th>
+                    <th>Verwijderen</th>
+                    <th>Interesse in onze school?</th>
+                    <th>Aanpassen</th>
+                </tr>
+                {% for i in info.invites %}
+                    {% if i.active %}
+                        {%  if i.subscribed %}
+                            <tr bgcolor="#90ee90">
+                        {% else %}
+                            <tr bgcolor="#ffb6c1">
+                        {%  endif %}
+                    {%  else %}
+                            <tr bgcolor="#ff4500">
+                    {%  endif %}
+
+                        <td  style="white-space: nowrap;">{{ i.first_name }}</td>
+                        <td  style="white-space: nowrap;">{{ i.last_name }}</td>
+                        <td  style="white-space: nowrap;">{{ i.email }}</td>
+                        <td><button type="submit" class="btn btn-primary"
+                                      onclick="do_action('resend-contact-invite', '{{ info.organization }}',
+                                              {{ i.id }});">Stuur</button></td>
+                        <td><button type="submit" class="btn btn-primary"
+                                      onclick="window.open('{{ i.url }}');">Inschrijven</button></td>
+                        <td><button type="submit" class="btn btn-primary"
+                                      onclick="do_action('remove-invite', '{{ info.organization }}',
+                                              {{ i.id }});">Verwijder</button></td>
+                        <td><button type="submit" class="btn btn-primary"
+                                      onclick="do_action('toggle-activation', '{{ info.organization }}',
+                                              {{ i.id }});">
+                        {% if i.active %}
+                            Geen
+                        {% else %}
+                            Wel
+                        {%  endif %}
+                            </button></td>
+                        <td><button type="submit" class="btn btn-primary" id="edit-{{ i.id }}"
+                                    onclick="edit_invite('edit-{{ i.id }}')">Pas aan</button></td>
+                    </tr>
+                {%  endfor %}
+          </table>
+    {% endif %}
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="new-invite-modal" tabindex="-1" role="dialog" aria-labelledby="new-invite-modalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Nieuw e-mailadres of aanpassen bestaand adres</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+
+        <form>
+          <div class="form-group">
+            <label for="invite-first-name" class="col-form-label">Voornaam:</label>
+            <input type="text" class="form-control" id="invite-first-name">
+          </div>
+          <div class="form-group">
+            <label for="invite-last-name" class="col-form-label">Achternaam:</label>
+            <input type="text" class="form-control" id="invite-last-name">
+          </div>
+          <div class="form-group">
+            <label for="invite-email" class="col-form-label">E-mailadres:</label>
+            <input type="text" class="form-control" id="invite-email">
+          </div>
+        </form>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuleer</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="invite_modal_save('{{ info.organization }}');">Bewaren</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{ super() }}
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script type="text/javascript"> {% include "insight.js" %}</script>
+{% endblock %}

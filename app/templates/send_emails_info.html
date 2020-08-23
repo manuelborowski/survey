@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{%  block head %}
+    {{ super() }}
+    <meta http-equiv="refresh" content="10"/>
+{%  endblock %}
+
+{% block content %}
+    <div class="container">
+    <h1>Verstuur de e-mails</h1>
+        <p>
+            {%  if sending_emails %}
+                <b>Belangrijk : laat dit venster open staan.</b><br>
+                Op dit moment worden de e-mails verstuurd.<br>
+                Dit kan enige tijd duren.<br>
+            {%  else %}
+                <b>Alle e-mails zijn verzonden.</b><br>
+            {%  endif %}
+            Aantal e-mails dat per minuut mag worden verzonden:&nbsp;{{ emails_per_minute }}<br>
+            Aantal ontvangers per e-mail:&nbsp;{{ recipients_per_email }}<br>
+            Aantal verzonden e-mails: {{ nbr_emails_sent_total }}<br>
+            {%  if not sending_emails %}
+                <form id="survey" action={{ url_for('sum_start') }} method="get">
+                    <button type="submit" class="btn btn-primary">Terug naar overzicht</button>
+                </form>
+            {%  endif %}
+            <br>
+        </p>
+    </div>
+    {{ super() }}
+{% endblock %}
