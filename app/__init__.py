@@ -63,6 +63,7 @@ flask_app = Flask(__name__)
 # Vxlsx_support.V1.43.2 : add TODO
 # V1.44 : laptop pickup : implemented mails and pages
 # V1.45 : ready to be deployed
+# V1.46 : added ehlo
 
 
 # TODO : per student, one invite with 2 (3) e-mailaddresses
@@ -72,7 +73,7 @@ flask_app = Flask(__name__)
 
 @flask_app.context_processor
 def inject_version():
-    return dict(version='V1.45')
+    return dict(version='V1.46')
 
 # enable logging
 LOG_HANDLE = 'SURVEY'
@@ -115,7 +116,9 @@ if len(sys.argv) < 2 or len(sys.argv) > 1 and sys.argv[1] != 'db':
         flask_app.config['MAIL_PASSWORD'] = email_account['password']
 
         host = SMTP(host=mail_server, port=mail_port)
+        host.ehlo()
         host.starttls()
+        host.ehlo()
         host.login(email_account['username'], email_account['password'])
         mails[email_account['username']] = host
     send_emails = False
