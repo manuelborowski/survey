@@ -1,15 +1,15 @@
-from flask import render_template, flash, redirect, url_for, request, jsonify, current_app
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask_login import login_required, current_user
 from app.forms import LoginForm
 from app import flask_app,  db, log, scheduler, mails
 from flask_login import login_user, logout_user
-from flask_mail import Message
-from app.models import Topic, Timeslot, Response, Setting, User, Link, Invite, ContactTimeslot, ContactResponse, update_email_tokens
-import numpy, datetime, time, sys, re
-import unicodecsv as csv, json, random, urllib.parse
+from app.models import Setting, User, Link, Invite, ContactTimeslot, ContactResponse, update_email_tokens
+import datetime, time, sys, re
+import json, random
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import pandas as pd
+from smtplib import SMTPServerDisconnected
 
 @flask_app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -102,14 +102,13 @@ def get_insight(org, info_token = None, topic='subscriptions'):
     if topic == 'invites':
         invites = Invite.query.filter(Invite.organization == org, Invite.enable == True).\
             order_by(Invite.last_name, Invite.first_name).all()
-        contactmoment_url = Setting.query.filter(Setting.key == 'contactmoment_url').first().value
         base_url = Setting.query.filter(Setting.key == 'base_url').first().value
         response_invit_first_last_name = [f'{r.invite.first_name}{r.invite.last_name}' for r in responses]
         invites_info = [{
             'email': i.email,
             'first_name': i.first_name,
             'last_name': i.last_name,
-            'url': base_url + '/' + contactmoment_url + '/' + org + '/' + i.token,
+            'url': base_url + '/subscribe/' + org + '/' + i.token,
             'id': i.id,
             'active': i.active,
             'subscribed': f'{i.first_name}{i.last_name}' in response_invit_first_last_name,
@@ -434,6 +433,10 @@ def send_email(organization, email_info):
     try:
         mails[email_sender].sendmail(email_sender, email_info['to'], msg.as_string())
         return True
+    except SMTPServerDisconnected as e:
+        mail_server = flask_app.config['MAIL_SERVER']
+        mail_port = flask_app.config['MAIL_PORT']
+        mails[email_sender].connect(host=mail_server, port=mail_port)
     except Exception as e:
         log.error(f'send_email: ERROR, could not send email: {e}')
     return False

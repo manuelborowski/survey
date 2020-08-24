@@ -3,7 +3,9 @@
 {% block content %}
         <div class="container">
          <form action="{{ '/save_contactmoment/' + organization }}" method="post">
-            Hier kan u kiezen of de leerling de laptop mag meenemen of dat u de laptop komt ophalen<br><br>
+             <br>
+            Beste ouder,<br><br>
+            Hier kan u kiezen of uw zoon/dochter de laptop mag meenemen of dat u de laptop komt ophalen<br><br>
             <input type="radio" name="who-pickup" value="student" onclick="display_contact_table(false);" checked>
             &nbsp;Leerling neemt de laptop mee naar huis<br><br>
             <input type="radio" name="who-pickup" value="parent" onclick="display_contact_table(true);">

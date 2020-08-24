@@ -1,14 +1,7 @@
-from flask import render_template, flash, redirect, url_for, request, jsonify, current_app
-from flask_login import login_required, current_user
-from app.forms import LoginForm
-from app import  db, log, scheduler, flask_app
-from flask_login import login_user, logout_user
-from flask_mail import Message
-from app.models import Topic, Timeslot, Response, Setting, User, Link, Invite, ContactTimeslot, ContactResponse, update_email_tokens
-import numpy, datetime, time, sys, re
-import unicodecsv as csv, json, random, urllib.parse
+from flask import render_template, request
+from app import  db
+from app.models import Invite, ContactResponse
 from . import laptop_pickup
-import pandas as pd
 from app import base
 
 organization = 'SUMLPU'

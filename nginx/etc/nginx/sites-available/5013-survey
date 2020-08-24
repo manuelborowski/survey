@@ -1,0 +1,11 @@
+server {
+    listen 5013;
+    listen 80;
+    #server_name survey.ict.campussintursula.be;
+    server_name survey.test.campussintursula.be;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:/home/aboro/projects/survey/survey.sock;
+    }
+}

@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve survey
+After=network.target
+
+[Service]
+User=aboro
+Group=www-data
+WorkingDirectory=/home/aboro/projects/survey
+Environment="PATH=/home/aboro/projects/survey/venv/bin"
+ExecStart=/home/aboro/projects/survey/venv/bin/uwsgi --ini survey.ini
+
+[Install]
+WantedBy=multi-user.target
