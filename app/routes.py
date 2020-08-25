@@ -438,6 +438,7 @@ def send_email(organization, email_info):
         mail_port = flask_app.config['MAIL_PORT']
         mails[email_sender].connect(host=mail_server, port=mail_port)
     except Exception as e:
+        mails[email_sender].ehlo()
         log.error(f'send_email: ERROR, could not send email: {e}')
     return False
 
