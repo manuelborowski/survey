@@ -1,10 +1,11 @@
 from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask_login import login_required, current_user
 from app.forms import LoginForm
-from app import flask_app,  db, log, scheduler, mails
+from app import flask_app,  db, log, scheduler, mail
 from flask_login import login_user, logout_user
 from app.models import Setting, User, Link, Invite, ContactTimeslot, ContactResponse, update_email_tokens
 import datetime, time, sys, re
+from flask_mail import Message
 import json, random
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -423,25 +424,12 @@ def save_contactmoment():
 def send_email(organization, email_info):
     key = '_'.join([organization, 'email_sender'])
     email_sender = Setting.query.filter(Setting.key == key).first().value
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = email_info['subject']
-    msg['From'] = email_sender
-    msg['To'] = email_info['to']
-    html = MIMEText(email_info['body'], 'html')
-    msg.attach(html)
-
+    msg = Message(subject=email_info['subject'], sender=email_sender, recipients=[email_info['to']])
+    msg.html = email_info['body']
     try:
-        mails[email_sender].ehlo_or_helo_if_needed()
-        mails[email_sender].sendmail(email_sender, email_info['to'], msg.as_string())
+        mail.send(msg)
         return True
-    except SMTPServerDisconnected as e:
-        mail_server = flask_app.config['MAIL_SERVER']
-        mail_port = flask_app.config['MAIL_PORT']
-        mails[email_sender].ehlo()
-        mails[email_sender].connect(host=mail_server, port=mail_port)
-        mails[email_sender].ehlo()
     except Exception as e:
-        mails[email_sender].ehlo_or_helo_if_needed()
         log.error(f'send_email: ERROR, could not send email: {e}')
     return False
 

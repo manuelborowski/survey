@@ -8,11 +8,10 @@ from flask_admin import Admin, helpers, expose, AdminIndexView
 from flask_admin.menu import MenuLink
 from flask_admin.contrib.sqla import ModelView
 from flask_jsglue import JSGlue
-# from flask_mail import Mail
+from flask_mail import Mail
 from flask_apscheduler import APScheduler
 import sys, logging, os, logging.handlers, datetime
 import atexit, time
-from smtplib import SMTP
 flask_app = Flask(__name__)
 
 # V1.0 : initial version
@@ -70,6 +69,7 @@ flask_app = Flask(__name__)
 # V1.50 : esthetic update 3
 # V1.51 : update requirements.txt
 # V1.52 : update ehlo_or_helo_if_needed
+# V1.53 : switched to flask_mail
 
 
 # TODO : per student, one invite with 2 (3) e-mailaddresses
@@ -79,7 +79,7 @@ flask_app = Flask(__name__)
 
 @flask_app.context_processor
 def inject_version():
-    return dict(version='V1.52')
+    return dict(version='V1.53')
 
 # enable logging
 LOG_HANDLE = 'SURVEY'
@@ -108,25 +108,13 @@ jsglue = JSGlue(flask_app)
 
 from app import models
 
-mails = {}
-
 if len(sys.argv) < 2 or len(sys.argv) > 1 and sys.argv[1] != 'db':
     # initialize db
     db.create_all()
 
     #initialize mail
-    mail_server = flask_app.config['MAIL_SERVER']
-    mail_port = flask_app.config['MAIL_PORT']
-    for email_account in flask_app.config['MAIL_ACCOUNTS']:
-        flask_app.config['MAIL_USERNAME'] = email_account['username']
-        flask_app.config['MAIL_PASSWORD'] = email_account['password']
-
-        host = SMTP(host=mail_server, port=mail_port)
-        host.ehlo()
-        host.starttls()
-        host.ehlo()
-        host.login(email_account['username'], email_account['password'])
-        mails[email_account['username']] = host
+    mail = Mail()
+    mail.init_app(flask_app)
     send_emails = False
 
     SCHEDULER_API_ENABLED = True
