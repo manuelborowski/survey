@@ -431,14 +431,17 @@ def send_email(organization, email_info):
     msg.attach(html)
 
     try:
+        mails[email_sender].ehlo_or_helo_if_needed()
         mails[email_sender].sendmail(email_sender, email_info['to'], msg.as_string())
         return True
     except SMTPServerDisconnected as e:
         mail_server = flask_app.config['MAIL_SERVER']
         mail_port = flask_app.config['MAIL_PORT']
-        mails[email_sender].connect(host=mail_server, port=mail_port)
-    except Exception as e:
         mails[email_sender].ehlo()
+        mails[email_sender].connect(host=mail_server, port=mail_port)
+        mails[email_sender].ehlo()
+    except Exception as e:
+        mails[email_sender].ehlo_or_helo_if_needed()
         log.error(f'send_email: ERROR, could not send email: {e}')
     return False
 

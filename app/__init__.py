@@ -69,6 +69,7 @@ flask_app = Flask(__name__)
 # V1.49 : esthetic update 2
 # V1.50 : esthetic update 3
 # V1.51 : update requirements.txt
+# V1.52 : update ehlo_or_helo_if_needed
 
 
 # TODO : per student, one invite with 2 (3) e-mailaddresses
@@ -78,7 +79,7 @@ flask_app = Flask(__name__)
 
 @flask_app.context_processor
 def inject_version():
-    return dict(version='V1.51')
+    return dict(version='V1.52')
 
 # enable logging
 LOG_HANDLE = 'SURVEY'
