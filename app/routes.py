@@ -298,7 +298,6 @@ def load_email_addresses():
     return redirect(url_for('settings', organization=organization))
 
 @flask_app.route('/export_invites', methods=['GET', 'POST'])
-@login_required
 def export_invites():
     invites = Invite.query.filter(Invite.organization == 'SUMLPU').all()
     data = [['status', 'datum', 'voonaam', 'naam', 'klas']]

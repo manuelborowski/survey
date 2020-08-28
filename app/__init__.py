@@ -72,6 +72,7 @@ import flask_excel as excel
 # V1.52 : update ehlo_or_helo_if_needed
 # V1.53 : switched to flask_mail
 # V1.54 : export to excel
+# V1.55 : small bugfix
 
 # TODO : per student, one invite with 2 (3) e-mailaddresses
 # TODO : invite : mail_sent : make it a counter
@@ -80,7 +81,7 @@ import flask_excel as excel
 
 @flask_app.context_processor
 def inject_version():
-    return dict(version='V1.54')
+    return dict(version='V1.55')
 
 # enable logging
 LOG_HANDLE = 'SURVEY'
