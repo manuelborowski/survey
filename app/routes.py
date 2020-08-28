@@ -7,10 +7,10 @@ from app.models import Setting, User, Link, Invite, ContactTimeslot, ContactResp
 import datetime, time, sys, re
 from flask_mail import Message
 import json, random
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 import pandas as pd
-from smtplib import SMTPServerDisconnected
+
+import flask_excel as excel
+
 
 @flask_app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -230,11 +230,14 @@ def send_email_with_ack_of_contactmoment(**kwargs):
     return ret
 
 
-def store_email_address(email, first_name, last_name, organization):
+def store_email_address(email, first_name, last_name, organization, class_group):
     if '@' in email:
         invite = Invite.query.filter(Invite.email == email, Invite.organization == organization).first()
-        if not invite:
-            invite = Invite(email=email, first_name=first_name, last_name=last_name, organization=organization)
+        if invite:
+            invite.class_group = class_group
+        else:
+            invite = Invite(email=email, first_name=first_name, last_name=last_name, organization=organization,
+                            class_group=class_group)
             db.session.add(invite)
             return True
     return False
@@ -266,21 +269,23 @@ def load_email_addresses():
         nbr_email_addresses = 0
         raw_emails_file_storage = request.files['upload_email_addresses']
         info = org_to_upload_email_info[organization]
-        first_name_field = Setting.query.filter(Setting.key == info['first_name']).first().value
-        last_name_field = Setting.query.filter(Setting.key == info['last_name']).first().value
-        email_1_field = Setting.query.filter(Setting.key == info['email_1']).first().value
-        email_2_field = Setting.query.filter(Setting.key == info['email_2']).first().value
-        organization_field = Setting.query.filter(Setting.key == info['organization']).first().value
-        organization_field = organization_field if organization_field else ''
+        first_name_field = 'Voornaam'
+        last_name_field = 'Naam'
+        email_1_field = 'LL_MOEDEREMAIL'
+        email_2_field = 'LL_VADEREMAIL'
+        organization_field = 'Deelschool'
+        class_field = 'Klas'
         try:
             emails_dict = pd.read_excel(raw_emails_file_storage, sheet_name='Form1',
-                                        usecols=[first_name_field, last_name_field, organization_field,
+                                        usecols=[first_name_field, last_name_field, organization_field, class_field,
                                                  email_1_field, email_2_field]).fillna('').to_dict(orient='records')
             for entry in emails_dict:
                 if (organization_field != '' and entry[organization_field].upper() == organization) or organization_field == '':
-                    ok1 = store_email_address(entry[email_1_field], entry[first_name_field], entry[last_name_field], organization)
+                    ok1 = store_email_address(entry[email_1_field], entry[first_name_field], entry[last_name_field],
+                                              organization, entry[class_field])
                     nbr_email_addresses += 1 if ok1 else 0
-                    ok2 = store_email_address(entry[email_2_field], entry[first_name_field], entry[last_name_field], organization)
+                    ok2 = store_email_address(entry[email_2_field], entry[first_name_field], entry[last_name_field],
+                                              organization, entry[class_field])
                     nbr_email_addresses += 1 if ok2 else 0
                     nbr_entries += 1 if ok1 or ok2 else 0
             db.session.commit()
@@ -291,6 +296,35 @@ def load_email_addresses():
     else:
         flash('Sorry, dit is geen goed bestand')
     return redirect(url_for('settings', organization=organization))
+
+@flask_app.route('/export_invites', methods=['GET', 'POST'])
+@login_required
+def export_invites():
+    invites = Invite.query.filter(Invite.organization == 'SUMLPU').all()
+    data = [['status', 'datum', 'voonaam', 'naam', 'klas']]
+    data_cache = {}
+    for invite in invites:
+        state = 'geen antwoord'
+        date = 'nvt'
+        class_group = invite.class_group if invite.class_group else ''
+        if invite.contact_responses:
+            response = invite.contact_responses[0]
+            if response.info == 'student':
+                state = 'student'
+            else:
+                state = 'tijdslot'
+                date = response.timeslot
+        key = invite.first_name + invite.last_name + class_group
+        if not key in data_cache:
+            data_cache[key] = [state, date, invite.first_name, invite.last_name, class_group]
+        else:
+            if state != 'geen antwoord':
+                data_cache[key][0] = state
+                data_cache[key][1] = date
+    for k, v in data_cache.items():
+        data.append(v)
+    return excel.make_response_from_array(data, "xlsx",
+                                          file_name=u"overzicht-laptop-afhalen.xlsx")
 
 
 def create_contactmoment_table(organization, decode_time_cb):

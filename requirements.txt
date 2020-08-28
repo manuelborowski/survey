@@ -3,6 +3,7 @@ appdirs==1.4.3
 asn1crypto==0.24.0
 Authlib==0.10
 Babel==2.6.0
+blinker==1.4
 certifi==2018.11.29
 cffi==1.12.1
 chardet==3.0.4
@@ -17,6 +18,7 @@ Flask-Babel==0.12.2
 Flask-Bootstrap==3.3.7.1
 Flask-JSGlue==0.3.1
 Flask-Login==0.4.1
+Flask-Mail==0.9.1
 Flask-Migrate==2.4.0
 flask-nav==0.6
 Flask-OAuthlib==0.9.5

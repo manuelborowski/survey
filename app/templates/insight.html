@@ -166,6 +166,11 @@
           </table>
     {% endif %}
 
+    <form id="survey" action="{{ url_for('export_invites') }}" method="post"  enctype=multipart/form-data>
+        <button type="submit" class="btn btn-primary" name="export" value="export">Export</button>
+    </form>
+
+
 
     <!-- Modal -->
     <div class="modal fade" id="new-invite-modal" tabindex="-1" role="dialog" aria-labelledby="new-invite-modalTitle" aria-hidden="true">

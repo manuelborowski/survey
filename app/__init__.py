@@ -13,6 +13,7 @@ from flask_apscheduler import APScheduler
 import sys, logging, os, logging.handlers, datetime
 import atexit, time
 flask_app = Flask(__name__)
+import flask_excel as excel
 
 # V1.0 : initial version
 # V1.1 : small update
@@ -70,7 +71,7 @@ flask_app = Flask(__name__)
 # V1.51 : update requirements.txt
 # V1.52 : update ehlo_or_helo_if_needed
 # V1.53 : switched to flask_mail
-
+# V1.54 : export to excel
 
 # TODO : per student, one invite with 2 (3) e-mailaddresses
 # TODO : invite : mail_sent : make it a counter
@@ -79,7 +80,7 @@ flask_app = Flask(__name__)
 
 @flask_app.context_processor
 def inject_version():
-    return dict(version='V1.53')
+    return dict(version='V1.54')
 
 # enable logging
 LOG_HANDLE = 'SURVEY'
@@ -116,6 +117,8 @@ if len(sys.argv) < 2 or len(sys.argv) > 1 and sys.argv[1] != 'db':
     mail = Mail()
     mail.init_app(flask_app)
     send_emails = False
+
+    excel.init_excel(flask_app)
 
     SCHEDULER_API_ENABLED = True
     scheduler = APScheduler()

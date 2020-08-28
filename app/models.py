@@ -143,11 +143,12 @@ class Invite(db.Model):
     email = db.Column(db.String(256))
     first_name = db.Column(db.String(256))
     last_name = db.Column(db.String(256))
+    class_group = db.Column(db.String(256), default='')
     token = db.Column(db.String(256))
     infomoment_sent = db.Column(db.Boolean, default=False)
     contactmoment_sent = db.Column(db.Boolean, default=False)
-    contact_responses = db.relationship('ContactResponse', cascade='all', backref='invite', lazy='dynamic')
-    responses = db.relationship('Response', cascade='all', backref='invite', lazy='dynamic')
+    contact_responses = db.relationship('ContactResponse', cascade='all', backref='invite')
+    responses = db.relationship('Response', cascade='all', backref='invite')
     organization = db.Column(db.String(256))
 
 
