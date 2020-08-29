@@ -100,8 +100,8 @@ def get_insight(org, info_token = None, topic='subscriptions'):
         responses_count = len(responses)
         navbar_title = f'Overzicht inschrijvingen van {org}'
 
-    nsubscribed = 0
     not_subscribed_cache = set()
+    subscribed_cache = set()
     if topic == 'invites':
         invites = Invite.query.filter(Invite.organization == org, Invite.enable == True).\
             order_by(Invite.last_name, Invite.first_name).all()
@@ -111,7 +111,7 @@ def get_insight(org, info_token = None, topic='subscriptions'):
         for i in invites:
             subscribed = f'{i.first_name}{i.last_name}' in response_invit_first_last_name
             if subscribed:
-                nsubscribed += 1
+                subscribed_cache.add(f'{i.first_name}{i.last_name}')
             else:
                 not_subscribed_cache.add(f'{i.first_name}{i.last_name}')
             invites_info.append({
@@ -135,9 +135,9 @@ def get_insight(org, info_token = None, topic='subscriptions'):
         'responses_count': responses_count,
         'invites': invites_info,
         'invites_count': invites_count,
-        'nsubscribed': nsubscribed,
+        'nsubscribed': len(subscribed_cache),
         'nnotsubscribed': len(not_subscribed_cache),
-        'nstudents': nsubscribed + len(not_subscribed_cache),
+        'nstudents': len(subscribed_cache) + len(not_subscribed_cache),
     }
 
     return render_template('insight.html', title='Overzicht', info=info, info_token=info_token, topic = topic,
