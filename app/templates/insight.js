@@ -5,6 +5,8 @@ function do_action(action, organization, id) {
     if(action == "resend-contact-invite") msg = "Bent u zeker dat u de uitnodiging opnieuw wil sturen?";
     if(action == "remove-invite") msg = "Bent u zeker dat u e-mailadres wil verwijderen?";
     if(action == "toggle-activation") msg = "Bent u zeker dat u dit wil aanpassen?";
+    if(action == "resend-not-responded") msg = "U stuur de uitnodiging nogmaals naar iedereeen die nog niet geantwoord heeft, ok?";
+
 
     bootbox.confirm(msg, function(result) {
         if (result) {

@@ -73,6 +73,7 @@ import flask_excel as excel
 # V1.53 : switched to flask_mail
 # V1.54 : export to excel
 # V1.55 : small bugfix
+# V1.56 : add button to send invitation e-mail to everyone that dit not respond yet
 
 # TODO : per student, one invite with 2 (3) e-mailaddresses
 # TODO : invite : mail_sent : make it a counter
@@ -81,7 +82,7 @@ import flask_excel as excel
 
 @flask_app.context_processor
 def inject_version():
-    return dict(version='V1.55')
+    return dict(version='V1.56')
 
 # enable logging
 LOG_HANDLE = 'SURVEY'

@@ -168,7 +168,9 @@
 
     <form id="survey" action="{{ url_for('export_invites') }}" method="post"  enctype=multipart/form-data>
         <button type="submit" class="btn btn-primary" name="export" value="export">Export</button>
-    </form>
+    </form><br>
+    <button type="submit" class="btn btn-primary" onclick="do_action('resend-not-responded', '{{ info.organization }}',0);">Stuur opnieuw</button>
+    Personen die nog niet gereageerd hebben krijgen opnieuw de uitnodiging.
 
 
 

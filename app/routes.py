@@ -297,6 +297,7 @@ def load_email_addresses():
         flash('Sorry, dit is geen goed bestand')
     return redirect(url_for('settings', organization=organization))
 
+
 @flask_app.route('/export_invites', methods=['GET', 'POST'])
 def export_invites():
     invites = Invite.query.filter(Invite.organization == 'SUMLPU').all()
@@ -322,8 +323,7 @@ def export_invites():
                 data_cache[key][1] = date
     for k, v in data_cache.items():
         data.append(v)
-    return excel.make_response_from_array(data, "xlsx",
-                                          file_name=u"overzicht-laptop-afhalen.xlsx")
+    return excel.make_response_from_array(data, "xlsx", file_name=u"overzicht-laptop-afhalen.xlsx")
 
 
 def create_contactmoment_table(organization, decode_time_cb):
@@ -691,6 +691,23 @@ def trigger_action(jds):
             invite.active = not invite.active
             db.session.commit()
             return jsonify({'status': True, 'msg': 'Activatie is aangepast.'})
+    except Exception as e:
+        log.error(f'Could not do action : {e}')
+        return jsonify({'status': False, 'msg': f'Kan activatie niet aanpassen.<br>{e}'})
+
+
+    try:
+        if action['action'] == 'resend-not-responded':
+            responses = ContactResponse.query.filter(ContactResponse.organization == 'SUMLPU').all()
+            invites = Invite.query.filter(Invite.organization == 'SUMLPU', Invite.enable == True).all()
+            response_invit_first_last_name = [f'{r.invite.first_name}{r.invite.last_name}' for r in responses]
+            nbr_sent = 0
+            for i in invites:
+                if not f'{i.first_name}{i.last_name}' in response_invit_first_last_name:
+                    i.contactmoment_sent = False
+                    nbr_sent += 1
+            db.session.commit()
+            return jsonify({'status': True, 'msg': f'{nbr_sent} e-mail(s) is/zijn verstuurd.'})
     except Exception as e:
         log.error(f'Could not do action : {e}')
         return jsonify({'status': False, 'msg': f'Kan activatie niet aanpassen.<br>{e}'})
