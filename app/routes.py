@@ -100,20 +100,29 @@ def get_insight(org, info_token = None, topic='subscriptions'):
         responses_count = len(responses)
         navbar_title = f'Overzicht inschrijvingen van {org}'
 
+    nsubscribed = 0
+    not_subscribed_cache = set()
     if topic == 'invites':
         invites = Invite.query.filter(Invite.organization == org, Invite.enable == True).\
             order_by(Invite.last_name, Invite.first_name).all()
         base_url = Setting.query.filter(Setting.key == 'base_url').first().value
         response_invit_first_last_name = [f'{r.invite.first_name}{r.invite.last_name}' for r in responses]
-        invites_info = [{
-            'email': i.email,
-            'first_name': i.first_name,
-            'last_name': i.last_name,
-            'url': base_url + '/subscribe/' + org + '/' + i.token,
-            'id': i.id,
-            'active': i.active,
-            'subscribed': f'{i.first_name}{i.last_name}' in response_invit_first_last_name,
-        } for i in invites]
+        invites_info = []
+        for i in invites:
+            subscribed = f'{i.first_name}{i.last_name}' in response_invit_first_last_name
+            if subscribed:
+                nsubscribed += 1
+            else:
+                not_subscribed_cache.add(f'{i.first_name}{i.last_name}')
+            invites_info.append({
+                'email': i.email,
+                'first_name': i.first_name,
+                'last_name': i.last_name,
+                'url': base_url + '/subscribe/' + org + '/' + i.token,
+                'id': i.id,
+                'active': i.active,
+                'subscribed': subscribed,
+            })
         invites_count = len(invites)
         navbar_title = f'Overzicht e-mailaddressen van {org}'
 
@@ -126,6 +135,9 @@ def get_insight(org, info_token = None, topic='subscriptions'):
         'responses_count': responses_count,
         'invites': invites_info,
         'invites_count': invites_count,
+        'nsubscribed': nsubscribed,
+        'nnotsubscribed': len(not_subscribed_cache),
+        'nstudents': nsubscribed + len(not_subscribed_cache),
     }
 
     return render_template('insight.html', title='Overzicht', info=info, info_token=info_token, topic = topic,

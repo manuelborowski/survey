@@ -107,6 +107,9 @@
     {% endif %}
 
     {% if topic == "invites" or topic == None %}
+        <h3>Totaal aantal leerlingen: {{ info.nstudents }}</h3>
+        <h3>Aantal leerlingen geantwoord: {{ info.nsubscribed }}</h3>
+        <h3>Aantal leerlingen niet geantwoord: {{ info.nnotsubscribed }}</h3>
         <h3>Aantal e-mailaddressen: {{ info.invites_count }}</h3>
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#new-invite-modal">E-mailadres toevoegen</button>
         <br><br>
