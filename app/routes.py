@@ -160,16 +160,17 @@ def multiple_subscriptions(org):
 
 def extract_subject_and_content(template):
     try:
+        template_no_newline = template.replace('\n', '')
         subject_pattern = 'TAG_ONDERWERP_START.*\[\((.*?)\)\].*TAG_ONDERWERP_STOP'
-        subject1 = re.search(subject_pattern, template).group(1)
+        subject1 = re.search(subject_pattern, template_no_newline).group(1)
         subject_pattern = 'TAG_ONDERWERP2_START.*\[\((.*?)\)\].*TAG_ONDERWERP2_STOP'
-        subject2 = re.search(subject_pattern, template)
+        subject2 = re.search(subject_pattern, template_no_newline)
         if subject2:
             subject2 = subject2.group(1)
         content_pattern = 'TAG_INHOUD_START.*\[\((.*?)\)\].*TAG_INHOUD_STOP'
-        content1 = re.search(content_pattern, template).group(1)
+        content1 = re.search(content_pattern, template_no_newline).group(1)
         content_pattern = 'TAG_INHOUD2_START.*\[\((.*?)\)\].*TAG_INHOUD2_STOP'
-        content2 = re.search(content_pattern, template)
+        content2 = re.search(content_pattern, template_no_newline)
         if content2:
             content2 = content2.group(1)
         return subject1, subject2, content1, content2

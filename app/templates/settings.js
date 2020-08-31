@@ -33,11 +33,11 @@ $(document).ready(function() {
                 lineHeights: ['0.6', '0.8', '1.0', '1.2', '1.4', '1.5', '2.0', '3.0'],
                 toolbar: [
                     ['style', ['bold', 'italic', 'underline', 'clear']],
-                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['font', ['fontname', 'strikethrough', 'superscript', 'subscript']],
                     ['fontsize', ['fontsize']],
                     ['color', ['color']],
                     ['para', ['ul', 'ol', 'paragraph']],
-                    ['insert', ['link',]],
+                    ['insert', ['link', 'picture', 'table']],
                     ['height', ['height']],
                     ['view', ['fullscreen', 'codeview', 'help']],
                   ]

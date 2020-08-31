@@ -1,3 +1,4 @@
+{%  if active %}
 {% extends 'subscribe_contactmoment.html' %}
 
 {% block content %}
@@ -27,3 +28,7 @@
     {{ super() }}
     <script type="text/javascript"> {% include "laptop_pickup/subscribe_contactmoment.js" %}</script>
 {% endblock %}
+{% else %}
+    <h3> Beste ouder, het is niet meer mogelijk om uw keuze te maken.</h3>
+    <h3> Neem eventueel contact op met onze school voor meer informatie.</h3>
+{%  endif %}
